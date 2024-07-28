@@ -8,8 +8,8 @@ class createServer:
     def _create_container(self, host, port):
         try:
             self.client.volumes.create("wcloud-uploads")
-        except docker.errors.APIError:
-            pass
+        except docker.errors.APIError as e:
+            print("Error: docker has error : ",str(e))
 
         container = self.client.containers.run(
             "python:3.9-slim",
