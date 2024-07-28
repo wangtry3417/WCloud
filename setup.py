@@ -1,7 +1,7 @@
 from setuptools import setup 
   
 setup( 
-    name='cloud', 
+    name='wcloud', 
     version='1.0', 
     description='A module that can create cloud server.', 
     author='WTech', 
