@@ -1,5 +1,7 @@
 # WCloud-py 庫
 
+wcloud 是一個基於docker的庫，主要用於雲端儲存服務。 下載wcloud-py前必須要有docker環境，Windows的話 一定要一直開着docker-desktop。
+
 1:下載：
 ``` bash
   pip install git+https://github.com/wangtry/WCloud.git
@@ -21,11 +23,30 @@ server.upload("test.py", "test.py")
 # 下載文件
 server.download("test.py", "downloaded_test.py")
 ```
-5:運行代碼：
+5:在虛擬機上運行代碼：
 ``` python
 from wcloud import WcloudRunner
 
 runner = WcloudRunner(host="0.0.0.0", port=3550)
 result = runner.run_script("test.py")
 print(result)
+```
+6:運行完整示例：
+``` python
+from wcloud import WcloudServer, WcloudRunner
+
+class WcloudApp(WcloudServer):
+    def __init__(self, host="0.0.0.0", port=3550):
+        super().__init__(host, port)
+        self.runner = WcloudRunner(host, port)
+
+    def run_script(self, script_path):
+        return self.runner.run_script(script_path)
+
+    def start(self):
+        self.run_server()
+
+if __name__ == "__main__":
+    app = WcloudApp()
+    app.start()
 ```
