@@ -1,6 +1,6 @@
 import os
 import subprocess
-from wcloud import createServer
+from .server import createServer
 
 class WcloudRunner(createServer):
     def __init__(self, host="0.0.0.0", port=3550):
