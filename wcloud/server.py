@@ -22,7 +22,19 @@ class createServer:
         )
         print(f"Serving at {host}:{port}")
         return container
-
+    def run_command(self,cmds:str):
+        container = self.client.containers.run(
+            "python:3.9-slim",
+            command=cmds
+            ports={f"{port}/tcp": port},
+            volumes={
+                "wcloud-uploads": {"bind": "/uploaded_files", "mode": "rw"}
+            },
+            detach=True,
+        )
+        print(str(container))
+        return container
+    
     def upload(self, local_file_path, remote_file_path):
         with open(local_file_path, "rb") as file:
             self.container.put_archive("/uploaded_files", file.read())
