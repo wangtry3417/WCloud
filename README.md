@@ -6,10 +6,10 @@
 ```
 2:引入及初始化：
 ``` python
-from wcloud import WcloudServer
+from wcloud import createServer
 
 # 創建服務器
-server = WcloudServer(host="0.0.0.0", port=3550)
+server = createServer(host="0.0.0.0", port=3550)
 ```
 3:上傳檔案：
 ``` python
