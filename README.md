@@ -1,7 +1,7 @@
 # WCloud-py 庫
 
 1:下載：
-```
+``` bash
   pip install git+https://github.com/wangtry/WCloud.git
 ```
 2:引入及初始化：
