@@ -21,3 +21,11 @@ server.upload("test.py", "test.py")
 # 下載文件
 server.download("test.py", "downloaded_test.py")
 ```
+5:運行代碼：
+``` python
+from wcloud import WcloudRunner
+
+runner = WcloudRunner(host="0.0.0.0", port=3550)
+result = runner.run_script("test.py")
+print(result)
+```
