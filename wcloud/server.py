@@ -57,3 +57,10 @@ class createServer:
                 file.write(chunk)
       except (IOError, docker.errors.DockerException) as e:
         print(f"Error downloading file: {e}")
+    def stop_container(self):
+      if self.container:
+        self.container.stop()
+
+    def remove_container(self):
+      if self.container:
+        self.container.remove(force=True)
