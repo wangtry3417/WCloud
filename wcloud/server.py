@@ -34,7 +34,7 @@ class createServer:
             result = self.container.exec_run(cmds)
             return result
         except docker.errors.DockerException as e:
-            print(f"Error running command: {e}")
+            print(f"錯誤運行命令: {e}")
             return None
 
     def upload(self, local_file_path, remote_file_path):
@@ -42,7 +42,7 @@ class createServer:
             with open(local_file_path, "rb") as file:
                 self.container.put_archive("/uploaded_files", file.read())
         except (IOError, docker.errors.DockerException) as e:
-            print(f"Error uploading file: {e}")
+            print(f"上傳檔案錯誤: {e}")
 
     def download(self, remote_file_path, local_file_path):
         try:
@@ -51,7 +51,7 @@ class createServer:
                 for chunk in stream:
                     file.write(chunk)
         except (IOError, docker.errors.DockerException) as e:
-            print(f"Error downloading file: {e}")
+            print(f"下載檔案錯誤: {e}")
 
     def stop_container(self):
         if self.container:
