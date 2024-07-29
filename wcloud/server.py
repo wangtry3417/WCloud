@@ -62,7 +62,7 @@ class createServer:
                 os.path.dirname(remote_file_path),
                 {"remote_file.txt": file_data}
             )
-            print(f"File uploaded to {remote_file_path}")
+            print(f"檔案成功上傳到這個路徑： {remote_file_path}")
         except (IOError, docker.errors.DockerException) as e:
             print(f"Error uploading file: {e}")
     def download(self, remote_file_path, local_file_path):
