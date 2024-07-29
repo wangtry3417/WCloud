@@ -1,30 +1,41 @@
 import docker
 
 class createServer:
-    def __init__(self, host="0.0.0.0", port=3550):
-        self.client = docker.from_env()
-        self.container = self._create_container(host, port)
+    _instances = {}
 
-    def _create_container(self, host, port):
+    def __init__(self, host="0.0.0.0", port=3550):
+        self.host = host
+        self.port = port
+        self.client = docker.from_env()
+        self.container = None
+        self.volume_name = f"wcloud-uploads-{id(self)}"
+
+        if self.volume_name not in self._instances:
+            self.container = self._create_container()
+            self._instances[self.volume_name] = self
+        else:
+            self.container = self._instances[self.volume_name].container
+
+    def _create_container(self):
         try:
-            self.client.volumes.create(f"wcloud-uploads-{id(self)}")
+            self.client.volumes.create(self.volume_name)
         except docker.errors.APIError as e:
             print("Error: docker has error : ", str(e))
 
         container = self.client.containers.run(
             "python:3.9-slim",
             command="python -m http.server 3550",
-            ports={f"{port}/tcp": port},
+            ports={f"{self.port}/tcp": self.port},
             volumes={
-                f"wcloud-uploads-{id(self)}": {"bind": "/uploaded_files", "mode": "rw"}
+                self.volume_name: {"bind": "/uploaded_files", "mode": "rw"}
             },
             environment={
-                "HOST": host,
-                "PORT": port
+                "HOST": self.host,
+                "PORT": self.port
             },
             detach=True
         )
-        print(f"Serving at {host}:{port}")
+        print(f"Serving at {self.host}:{self.port}")
         return container
 
     def run_command(self, cmds: str):
@@ -32,9 +43,8 @@ class createServer:
             container = self.client.containers.run(
                 "python:3.9-slim",
                 command=cmds,
-                ports={f"{port}/tcp": port},
                 volumes={
-                    f"wcloud-uploads-{id(self)}": {"bind": "/uploaded_files", "mode": "rw"}
+                    self.volume_name: {"bind": "/uploaded_files", "mode": "rw"}
                 },
                 detach=True
             )
@@ -44,13 +54,6 @@ class createServer:
             print(f"Error running command: {e}")
             return None
 
-    def upload(self, local_file_path, remote_file_path):
-        try:
-            with open(local_file_path, "rb") as file:
-                self.container.put_archive("/uploaded_files", file.read())
-        except (IOError, docker.errors.DockerException) as e:
-            print(f"Error uploading file: {e}")
-
     def download(self, remote_file_path, local_file_path):
         try:
             stream, _ = self.container.get_archive(remote_file_path)
@@ -59,11 +62,3 @@ class createServer:
                     file.write(chunk)
         except (IOError, docker.errors.DockerException) as e:
             print(f"Error downloading file: {e}")
-
-    def stop_container(self):
-        if self.container:
-            self.container.stop()
-
-    def remove_container(self):
-        if self.container:
-            self.container.remove(force=True)
