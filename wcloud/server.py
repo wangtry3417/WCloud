@@ -1,4 +1,5 @@
 import docker
+from io import BytesIO
 
 class createServer:
     _instances = {}
@@ -53,7 +54,17 @@ class createServer:
         except docker.errors.DockerException as e:
             print(f"Error running command: {e}")
             return None
-
+    def upload(self, remote_file_path, local_file_path):
+        try:
+            with open(local_file_path, "rb") as f:
+                file_data = f.read()
+            self.container.put_archive(
+                os.path.dirname(remote_file_path),
+                {"remote_file.txt": file_data}
+            )
+            print(f"File uploaded to {remote_file_path}")
+        except (IOError, docker.errors.DockerException) as e:
+            print(f"Error uploading file: {e}")
     def download(self, remote_file_path, local_file_path):
         try:
             stream, _ = self.container.get_archive(remote_file_path)
