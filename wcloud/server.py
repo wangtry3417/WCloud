@@ -14,8 +14,8 @@ class createServer:
             print("Error: docker has error : ", str(e))
 
         container = self.client.containers.run(
-            "python:3.9-slim",
-            command="python -m http.server 3550",
+            "ubuntu:latest",
+            command="/bin/bash -c 'apt-get update && apt-get install -y python3 && python3 -m http.server 3550'",
             ports={f"{self.port}/tcp": self.port},
             volumes={
                 "wcloud-uploads": {"bind": "/uploaded_files", "mode": "rw"}
@@ -34,7 +34,7 @@ class createServer:
             result = self.container.exec_run(cmds)
             return result
         except docker.errors.DockerException as e:
-            print(f"錯誤運行命令: {e}")
+            print(f"運行指令錯誤: {e}")
             return None
 
     def upload(self, local_file_path, remote_file_path):
@@ -42,7 +42,7 @@ class createServer:
             with open(local_file_path, "rb") as file:
                 self.container.put_archive("/uploaded_files", file.read())
         except (IOError, docker.errors.DockerException) as e:
-            print(f"上傳檔案錯誤: {e}")
+            print(f"上載檔案錯誤: {e}")
 
     def download(self, remote_file_path, local_file_path):
         try:
@@ -54,9 +54,7 @@ class createServer:
             print(f"下載檔案錯誤: {e}")
 
     def stop_container(self):
-        if self.container:
-            self.container.stop()
+        self.container.stop()
 
     def remove_container(self):
-        if self.container:
-            self.container.remove(force=True)
+        self.container.remove()
