@@ -5,12 +5,7 @@ class createServer:
         self.host = host
         self.port = port
         self.client = docker.from_env()
-        self.container = None
-
-    def get_container(self):
-        if not self.container:
-            self.container = self._create_container()
-        return self.container
+        self.container = self._create_container()
 
     def _create_container(self):
         try:
@@ -36,8 +31,7 @@ class createServer:
 
     def run_command(self, cmds: str):
         try:
-            container = self.get_container()
-            result = container.exec_run(cmds)
+            result = self.container.exec_run(cmds)
             return result
         except docker.errors.DockerException as e:
             print(f"Error running command: {e}")
@@ -45,16 +39,14 @@ class createServer:
 
     def upload(self, local_file_path, remote_file_path):
         try:
-            container = self.get_container()
             with open(local_file_path, "rb") as file:
-                container.put_archive("/uploaded_files", file.read())
+                self.container.put_archive("/uploaded_files", file.read())
         except (IOError, docker.errors.DockerException) as e:
             print(f"Error uploading file: {e}")
 
     def download(self, remote_file_path, local_file_path):
         try:
-            container = self.get_container()
-            stream, _ = container.get_archive(remote_file_path)
+            stream, _ = self.container.get_archive(remote_file_path)
             with open(local_file_path, "wb") as file:
                 for chunk in stream:
                     file.write(chunk)
