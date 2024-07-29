@@ -55,16 +55,21 @@ class createServer:
             print(f"Error running command: {e}")
             return None
     def upload(self, remote_file_path, local_file_path):
-        try:
-            with open(local_file_path, "rb") as f:
-                file_data = f.read()
-            self.container.put_archive(
-                os.path.dirname(remote_file_path),
-                {"remote_file.txt": file_data}
-            )
-            print(f"檔案成功上傳到這個路徑： {remote_file_path}")
-        except (IOError, docker.errors.DockerException) as e:
-            print(f"Error uploading file: {e}")
+      try:
+        with open(local_file_path, "rb") as f:
+            file_data = f.read()
+        
+        # 獲取上傳文件的文件名
+        filename = os.path.basename(local_file_path)
+        
+        self.container.put_archive(
+            os.path.dirname(remote_file_path),
+            {filename: file_data}
+        )
+        
+        print(f"檔案 {filename} 成功上傳到遠程路徑 {remote_file_path}")
+      except (IOError, docker.errors.DockerException) as e:
+        print(f"上傳文件時發生錯誤: {e}")
     def download(self, remote_file_path, local_file_path):
         try:
             stream, _ = self.container.get_archive(remote_file_path)
