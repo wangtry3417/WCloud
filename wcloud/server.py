@@ -58,3 +58,12 @@ class createServer:
 
     def remove_container(self):
         self.container.remove()
+        
+    def get_file_list(self):
+      try:
+        _, stat_dict = self.container.get_archive('/uploaded_files')
+        file_list = [f['name'] for f in stat_dict['files']]
+        return file_list
+      except docker.errors.DockerException as e:
+        print(f"獲取檔案列表錯誤: {e}")
+        return []
