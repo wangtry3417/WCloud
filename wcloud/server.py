@@ -1,4 +1,5 @@
 import docker,os
+from .install import check_docker_env
 
 class createServer:
     def __init__(self, host="0.0.0.0", port=3550):
@@ -11,7 +12,7 @@ class createServer:
         try:
             self.client.volumes.create("wcloud-uploads")
         except docker.errors.APIError as e:
-            print("Error: docker has error : ", str(e))
+            check_docker_env()
 
         container = self.client.containers.run(
             "ubuntu:latest",
