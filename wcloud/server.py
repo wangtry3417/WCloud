@@ -6,7 +6,10 @@ class createServer:
         self.host = host
         self.port = port
         self.client = docker.from_env()
-        self.container = self._create_container()
+        try:
+          self.container = self._create_container()
+        except docker.errors.APIError as e:
+            check_docker_env()
 
     def _create_container(self):
         try:
