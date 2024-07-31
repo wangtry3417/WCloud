@@ -1,6 +1,6 @@
 # WCloud-py 庫
 
-wcloud 是一個基於docker的庫，主要用於雲端儲存服務。 下載wcloud-py前必須要有docker環境，Windows的話 一定要一直開着docker-desktop。
+wcloud 是一個基於docker的庫，主要用於雲端儲存服務。 
 
 1:下載：
 ``` bash
