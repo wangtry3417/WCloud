@@ -9,7 +9,7 @@ class createServer:
         try:
           self.container = self._create_container()
         except docker.errors.APIError as e:
-            check_docker_env()
+          check_docker_env()
 
     def _create_container(self):
         try:
